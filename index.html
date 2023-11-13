@@ -148,7 +148,7 @@
             var randNum = 0;
             if (wrongListRand < 3 || wrongListIdx.length == 0) {
                 randNum = getRandomInt(characters.length);
-                if (seenList.includes(randNum) && showNew == 0) {
+                if (seenList.includes(randNum) && showNew == 0 && seenList.length < characters.length) {
                     continue;
                 }
             } else {
