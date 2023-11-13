@@ -149,7 +149,7 @@
             } else {
                 while(true){
                     randPinyinAns = pinyin[getRandomInt(characters.length)];
-                    if (pinyin_answers.includes(randPinyinAns)) {
+                    if (pinyin_answers.includes(randPinyinAns) || randPinyinAns == pinyin[randNum]) {
                         continue;
                     }
                     box.innerText = randPinyinAns;
