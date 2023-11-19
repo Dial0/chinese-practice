@@ -1,170 +1,187 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chinese Practice</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chinese Practice</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-    .grid-container {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr); /* Updated to two columns */
-      grid-template-rows: repeat(6, 100px); /* Adjusted rows */
-      gap: 10px;
-      padding: 20px;
-    }
+      .grid-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* Updated to two columns */
+        grid-template-rows: repeat(6, 100px); /* Adjusted rows */
+        gap: 10px;
+        padding: 20px;
+      }
 
-    .large-box {
-      grid-column: span 2;
-      grid-row: span 2;
-      background-color: #3498db;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 4em;
-    }
+      .large-box {
+        grid-column: span 2;
+        grid-row: span 2;
+        background-color: #3498db;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4em;
+      }
 
-    .small-box {
-      background-color: #3498db;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2em;
-    }
-    .small-box.clicked {
-      background-color: #e74c3c;
-    }
-    .small-box-correct {
-      background-color: #3498db;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2em;
-    }
-    .small-box-correct.clicked {
-      background-color: #2ecc71;
-    }
-    .tally{
+      .small-box {
+        background-color: #3498db;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2em;
+      }
+      .small-box.clicked {
+        background-color: #e74c3c;
+      }
+      .small-box-correct {
+        background-color: #3498db;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2em;
+      }
+      .small-box-correct.clicked {
+        background-color: #2ecc71;
+      }
+      .tally {
         text-align: center;
-    }
-
-  </style>
-</head>
-<body onload="populateSelections()">
-
-  <div class="grid-container" >
-    <div class="large-box"></div>
-    <div class="small-box" onclick="handleBoxClick(this)"></div>
-    <div class="small-box" onclick="handleBoxClick(this)"></div>
-    <div class="small-box" onclick="handleBoxClick(this)"></div>
-    <div class="small-box" onclick="handleBoxClick(this)"></div>
-    <div class="small-box" onclick="handleBoxClick(this)"></div>
-    <div class="small-box" onclick="handleBoxClick(this)"></div>
-    <div class="small-box" onclick="handleBoxClick(this)"></div>
-    <div class="small-box" onclick="handleBoxClick(this)"></div>
-  </div>
-  <div class="tally">
-    <div id="tally-correct">
-        Correct: 0
+      }
+      .play-button {
+        cursor: pointer;
+        position: relative;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        left: 25px;
+        bottom: 0px;
+        border: 2px solid #fff;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body onload="populateSelections()">
+    <div class="grid-container">
+      <div class="large-box"></div>
+      <div class="small-box" onclick="handleBoxClick(this)"></div>
+      <div class="small-box" onclick="handleBoxClick(this)"></div>
+      <div class="small-box" onclick="handleBoxClick(this)"></div>
+      <div class="small-box" onclick="handleBoxClick(this)"></div>
+      <div class="small-box" onclick="handleBoxClick(this)"></div>
+      <div class="small-box" onclick="handleBoxClick(this)"></div>
+      <div class="small-box" onclick="handleBoxClick(this)"></div>
+      <div class="small-box" onclick="handleBoxClick(this)"></div>
     </div>
-    <div id="tally-wrong">
-        Wrong: 0
+    <div class="tally">
+      <div id="tally-correct">Correct: 0</div>
+      <div id="tally-wrong">Wrong: 0</div>
+      <div id="tally-total">Total: 0</div>
     </div>
-    <div id="tally-total">
-        Total: 0
-    </div>
-  </div>
 
-  <script>
-    var revealed = false;
-    var correct = 0;
-    var wrong = 0;
-    var wrongList = [];
-    var wrongListIdx = [];
-    var wrongListCount = [];
-    var curIdx = 0;
-    var previousIdx = 0;
-    var seenList = [];
-    var onWrongList = false;
-    var wrongListSelIdx = 0;
-    var wrongListExpireNum = 5;
-    function handleBoxClick(box) {
+    <script src="characters.js"></script> 
+
+    <script>
+      var revealed = false;
+      var correct = 0;
+      var wrong = 0;
+      var wrongList = [];
+      var wrongListIdx = [];
+      var wrongListCount = [];
+      var curIdx = 0;
+      var previousIdx = 0;
+      var seenList = [];
+      var onWrongList = false;
+      var wrongListSelIdx = 0;
+      var wrongListExpireNum = 5;
+
+      function playSound(audio_url) {
+        let audio = new Audio(audio_url);
+        audio.play();
+        return false;
+      }
+
+      function handleBoxClick(box) {
         if (revealed == false) {
-            if(box.className != "small-box-correct"){
-                boxes = document.getElementsByClassName("small-box-correct");
-                Array.from(boxes).forEach(box => {
-                    box.classList.toggle('clicked');
-                });
-                wrong += 1;
-                wrongList.push(document.getElementsByClassName("large-box")[0].innerText);
-                wrongListIdx.push(curIdx);
-                wrongListCount.push(0);
-            } else {
-                correct += 1;
-                if(onWrongList) {
-                    wrongListCount[wrongListSelIdx] += 1;
-                    if(wrongListCount[wrongListSelIdx] > wrongListExpireNum) {
-                        wrongList.splice(wrongListSelIdx, 1);
-                        wrongListIdx.splice(wrongListSelIdx, 1);
-                        wrongListCount.splice(wrongListSelIdx, 1);
-                    }
-                }
+          if (box.className != "small-box-correct") {
+            boxes = document.getElementsByClassName("small-box-correct");
+            Array.from(boxes).forEach((box) => {
+              box.classList.toggle("clicked");
+            });
+            wrong += 1;
+            wrongList.push(
+              document.getElementsByClassName("large-box")[0].innerText
+            );
+            wrongListIdx.push(curIdx);
+            wrongListCount.push(0);
+          } else {
+            correct += 1;
+            if (onWrongList) {
+              wrongListCount[wrongListSelIdx] += 1;
+              if (wrongListCount[wrongListSelIdx] > wrongListExpireNum) {
+                wrongList.splice(wrongListSelIdx, 1);
+                wrongListIdx.splice(wrongListSelIdx, 1);
+                wrongListCount.splice(wrongListSelIdx, 1);
+              }
             }
-            box.classList.toggle('clicked');
-            revealed = true
+          }
+          box.classList.toggle("clicked");
+          revealed = true;
+        } else {
+          populateSelections();
         }
-        else {
-            populateSelections();
-        }
-    }
-    function getRandomInt(max) {
+      }
+
+      function getRandomInt(max) {
         return Math.floor(Math.random() * max);
-    }
-    function populateSelections(){
+      }
+      function populateSelections() {
         revealed = false;
         ansbox = document.getElementsByClassName("small-box-correct")[0];
-        if (ansbox){
-            ansbox.className = "small-box";
+        if (ansbox) {
+          ansbox.className = "small-box";
         }
-        
-        characters = ["你", "好", "你好", "再", "见", "再见", "零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "白", "元", "叫", "我", "张", "李", "明", "名", "字", "名字", "什", "么", "什么", "姓", "王", "呢", "你呢", "很", "高", "兴", "高兴", "认", "识", "认识", "也", "吃", "饭", "鱼", "面", "喝", "水", "茶", "不", "是", "他", "她", "学", "生", "学生", "吗", "们", "老", "师", "老师", "医", "医生", "的", "电", "话", "电话", "号", "码", "号码", "国", "中国", "人", "哪", "英国", "美国", "对", "加拿大", "早", "上", "早上", "怎", "样", "怎么样", "今", "天", "今天", "家", "家人", "北京", "在", "儿", "纽约", "香港", "住", "伦敦", "台湾", "谢谢", "客", "气", "不客气", "起", "对不起", "没", "关", "系", "没关系", "爸", "爸爸", "妈", "妈妈", "爱", "谁", "那", "个", "这", "哥", "哥哥", "姐", "姐姐", "有", "弟", "弟弟", "和", "妹", "妹妹", "请", "问", "请问", "知", "道", "知道", "说", "语", "汉", "帮", "助", "帮助", "次", "一次", "安", "晚安", "早安", "会", "一会儿", "最", "近", "最近", "久", "好久", "好久不见", "错", "不错", "要", "热", "冰", "牛", "奶", "牛奶", "咖啡", "洗", "手", "间", "洗手间", "院", "医院", "馆", "饭馆"]
-        pinyin = ["Nǐ", "Hǎo", "Nǐ hǎo", "Zài", "Jiàn", "Zài jiàn", "Líng", "Yī", "Èr", "Sān", "Sì", "Wǔ", "Liù", "Qī", "Bā", "Jiǔ", "Shí", "Bái", "Yuán", "Jiào", "Wǒ", "Zhāng", "Lǐ", "Míng", "Míng", "Zì", "Míng Zì", "Shén", "Me", "Shénme", "Xìng", "Wáng", "Ne", "Nǐ ne", "Hěn", "Gāo", "Xìng", "Gāoxìng", "Rèn", "Shí", "Rènshí", "Yě", "Chī", "Fàn", "Yú", "Miàn", "Hē", "Shuǐ", "Chá", "Bù", "Shì", "Tā", "Tā", "Xué", "Shēng", "Xuéshēng", "Ma", "Men", "Lǎo", "Shī", "Lǎoshī", "Yī", "Yīshēng", "De", "Diàn", "Huà", "Diànhuà", "Hào", "Mǎ", "Hàomǎ", "Guó", "Zhōng guó", "Rén", "Nǎ", "Yīng guó", "Měi  guó", "Duì", "Jiānádà", "Zǎo", "Shang", "Zǎoshang", "Zěn", "Yàng", "Zěnme yàng", "Jīn", "Tiān", "Jīntiān", "Jiā", "Jiārén", "Běijīng", "Zài", "er", "Niǔyuē", "Xiānggǎng", "Zhù", "Lúndūn", "Táiwān", "Xièxiè", "Kè", "Qì", "Bù kèqì", "Qǐ", "Duìbùqǐ", "Méi", "Guān", "Xì", "Méiguānxì", "Bà", "Bàba", "Mā", "Māmā", "Ài", "Shéi", "Nà", "Gè", "Zhè", "Gē", "Gēgē", "Jiě", "Jiějiě", "Yǒu", "Dì", "Dìdì", "Hé", "Mèi", "Mèimei", "Qǐng", "Wèn", "Qǐngwèn", "Zhī", "Dào", "Zhīdào", "Shuō", "Yǔ", "Hàn", "Bāng", "Zhù", "Bāngzhù", "Cì", "Yīcì", "Ān", "Wǎn ān", "Zǎo ān", "Huì", "Yīhuǐ'er", "Zuì", "Jìn", "Zuìjìn", "Jiǔ", "Hǎojiǔ", "Hǎojiǔ bùjiàn", "Cuò", "Bùcuò", "Yào", "Rè", "Bīng", "Niú", "Nǎi", "Niúnǎi", "Kāfēi", "Xǐ", "Shǒu", "Jiān", "Xǐshǒujiān", "Yuàn", "Yīyuàn", "Guǎn", "Fànguǎn"]
-        
+
         onWrongList = false;
         wrongListSelIdx = 0;
         showNew = getRandomInt(2);
-        while(true){
-            wrongListRand = getRandomInt(4);
-            var randNum = 0;
-            if (wrongListRand < 3 || wrongListIdx.length == 0) {
-                randNum = getRandomInt(characters.length);
-                if (seenList.includes(randNum) && showNew == 0 && seenList.length < characters.length) {
-                    continue;
-                }
-            } else {
-                wrLstIdx = getRandomInt(wrongListIdx.length);
-                randNum = wrongListIdx[wrLstIdx];
-                onWrongList = true;
-                wrongListSelIdx = wrLstIdx;
+        while (true) {
+          wrongListRand = getRandomInt(4);
+          var randNum = 0;
+          if (wrongListRand < 3 || wrongListIdx.length == 0) {
+            randNum = getRandomInt(characters.length);
+            if (
+              seenList.includes(randNum) &&
+              showNew == 0 &&
+              seenList.length < characters.length
+            ) {
+              continue;
             }
-            if (randNum != previousIdx) {
-                break;
-            } else {
-                continue;
-            }
+          } else {
+            wrLstIdx = getRandomInt(wrongListIdx.length);
+            randNum = wrongListIdx[wrLstIdx];
+            onWrongList = true;
+            wrongListSelIdx = wrLstIdx;
+          }
+          if (randNum != previousIdx) {
+            break;
+          } else {
+            continue;
+          }
         }
-        
-        if (!seenList.includes(randNum)){
-            seenList.push(randNum)
+
+        if (!seenList.includes(randNum)) {
+          seenList.push(randNum);
         }
 
         previousIdx = randNum;
@@ -178,32 +195,58 @@
         boxes = document.getElementsByClassName("small-box");
         loopIdx = 0;
         pinyin_answers = [];
-        Array.from(boxes).forEach(box => {
-            box.classList.remove("clicked");
-            if(loopIdx == ansPos) {
-                box.innerText = pinyin[randNum];
-                box.className = "small-box-correct";
-            } else {
-                while(true){
-                    randPinyinAns = pinyin[getRandomInt(characters.length)];
-                    if (pinyin_answers.includes(randPinyinAns) || randPinyinAns == pinyin[randNum]) {
-                        continue;
-                    }
-                    box.innerText = randPinyinAns;
-                    break;
-                }
+        Array.from(boxes).forEach((box) => {
+          box.classList.remove("clicked");
+          if (loopIdx == ansPos) {
+            let audio_url =
+              "https://translate.google.com.vn/translate_tts?ie=UTF-8&q=" +
+              characters[randNum] +
+              "&tl=zh-CN&client=tw-ob";
+            box.innerHTML =
+              pinyin[randNum] +
+              '<div class="play-button" onclick="event.stopPropagation(); playSound(\'' +
+              audio_url +
+              "');\" >▶</div>";
+            //box.innerText = pinyin[randNum];
+            box.className = "small-box-correct";
+          } else {
+            while (true) {
+              randansIdx = getRandomInt(characters.length);
+              randPinyinAns = pinyin[randansIdx];
+              if (
+                pinyin_answers.includes(randPinyinAns) ||
+                randPinyinAns == pinyin[randNum]
+              ) {
+                continue;
+              }
+              let audio_url =
+                "https://translate.google.com.vn/translate_tts?ie=UTF-8&q=" +
+                characters[randansIdx] +
+                "&tl=zh-CN&client=tw-ob";
+              box.innerHTML =
+                randPinyinAns +
+                '<div class="play-button" onclick="event.stopPropagation(); playSound(\'' +
+                audio_url +
+                "');\" >▶</div>";
+              break;
             }
-            pinyin_answers.push(box.innerText);
-            loopIdx += 1;
+          }
+          pinyin_answers.push(box.innerText);
+          loopIdx += 1;
         });
 
-        document.getElementById("tally-correct").innerText = "Correct: " + correct;
-        document.getElementById("tally-wrong").innerText = "Wrong: " + wrong + " - " + wrongList;
-        document.getElementById("tally-total").innerText = "Total: " + (correct+wrong) + " Seen: "+ seenList.length +"/"+characters.length;
-        
-    }
-
-  </script>
-
-</body>
+        document.getElementById("tally-correct").innerText =
+          "Correct: " + correct;
+        document.getElementById("tally-wrong").innerText =
+          "Wrong: " + wrong + " - " + wrongList;
+        document.getElementById("tally-total").innerText =
+          "Total: " +
+          (correct + wrong) +
+          " Seen: " +
+          seenList.length +
+          "/" +
+          characters.length;
+      }
+    </script>
+  </body>
 </html>
